@@ -27,29 +27,6 @@ echo "Файл $AUTOLOGIN_FILE создан или обновлен."
 systemctl daemon-reload
 echo "Конфигурация systemd обновлена."
 
-# Проверка, установлен ли SSH-клиент
-if ! command -v ssh >/dev/null 2>&1; then
-  echo "SSH-клиент не установлен. Устанавливаем openssh-client..."
-  apt update && apt install -y openssh-client
-fi
-
-# Проверка, установлен ли и запущен ли SSH-сервер
-if ! systemctl is-active ssh >/dev/null 2>&1; then
-  echo "SSH-сервер не запущен. Устанавливаем и запускаем openssh-server..."
-  apt update && apt install -y openssh-server
-  systemctl enable ssh
-  systemctl start ssh
-fi
-
-# Тест SSH-подключения к localhost
-echo "Проверка SSH-подключения к localhost для root..."
-ssh -o BatchMode=yes -o ConnectTimeout=5 root@localhost 'echo "SSH работает: подключение к localhost успешно!"' || {
-  echo "Ошибка: не удалось подключиться по SSH к localhost."
-  echo "Проверьте, разрешен ли вход для root в /etc/ssh/sshd_config (PermitRootLogin yes)."
-  exit 1
-}
-
 # Сообщение о завершении
 echo "Настройка автоматического входа для root завершена."
-echo "SSH-подключение к localhost проверено успешно."
-echo "Перезагрузите сервер командой 'sudo reboot', чтобы применить автологин."
+echo "Перезагрузите сервер командой 'sudo reboot', чтобы проверить."
